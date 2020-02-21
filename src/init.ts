@@ -5,9 +5,9 @@ const initLocalization = function<
   T extends Record<string, LangType>,
   P extends keyof T
 >(translations: T, defaultLang?: P) {
-  let deflang: string = defaultLang
-    ? defaultLang.toString()
-    : Object.keys(translations)[0];
+  const keys = Object.keys(translations);
+
+  let deflang: string = defaultLang ? defaultLang.toString() : keys[0];
 
   const { exLang, newLangs } = excludeLang(translations, deflang);
   let langs = JSON.stringify(newLangs);
@@ -16,20 +16,28 @@ const initLocalization = function<
 
   return function<L extends keyof T>(langName?: L): UpdatedLocalLangType {
     let lngName = langName ? langName.toString() : deflang;
-    if (langName && langName !== activeLang) {
-      const { activeLang: activeLangObj, storeLangs } = switchLangs(
-        langs,
+    if (keys?.includes(lngName)) {
+      console.warn("language Name should be one of  " + `${keys}`);
+      return {
         lang,
-        lngName
-      );
-      lang = activeLangObj;
-      langs = storeLangs;
-      activeLang = lngName;
+        activeLang
+      };
+    } else {
+      if (langName && langName !== activeLang) {
+        const { activeLang: activeLangObj, storeLangs } = switchLangs(
+          langs,
+          lang,
+          lngName
+        );
+        lang = activeLangObj;
+        langs = storeLangs;
+        activeLang = lngName;
+      }
+      return {
+        lang,
+        activeLang
+      };
     }
-    return {
-      lang,
-      activeLang
-    };
   };
 };
 

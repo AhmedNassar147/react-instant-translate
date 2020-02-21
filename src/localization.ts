@@ -31,12 +31,18 @@ class Localization {
     T extends Record<string, LangType>,
     P extends keyof T | string
   >(translations: T, defaultLang: P): void {
+    if (
+      !translations ||
+      (!Array.isArray(translations) && !Object.keys(translations).length)
+    ) {
+      throw "Translations Required for initialization";
+    }
     this.translations = JSON.stringify(translations);
     this.updater(translations, defaultLang);
   }
 
   getLangData(langName: string): LocalProps {
-    this.updater(JSON.parse(this.translations), langName);
+    this.updater(JSON.parse(this.translations), langName || this.activeLang);
     return {
       currentTranslation: this.langData,
       activeLang: this.activeLang,
