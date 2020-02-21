@@ -6,8 +6,17 @@ const initLocalization = function<
   P extends keyof T
 >(translations: T, defaultLang?: P) {
   const keys = Object.keys(translations);
+  let deflang: string = "";
 
-  let deflang: string = defaultLang ? defaultLang.toString() : keys[0];
+  if (!defaultLang) {
+    deflang = keys[0];
+  } else if (defaultLang) {
+    deflang = defaultLang.toString();
+    if (!keys.includes(deflang)) {
+      console.warn(`default Lang should be one of  ${keys}`);
+      deflang = keys[0];
+    }
+  }
 
   const { exLang, newLangs } = excludeLang(translations, deflang);
   let langs = JSON.stringify(newLangs);
@@ -16,8 +25,8 @@ const initLocalization = function<
 
   return function<L extends keyof T>(langName?: L): UpdatedLocalLangType {
     let lngName = langName ? langName.toString() : deflang;
-    if (keys?.includes(lngName)) {
-      console.warn("language Name should be one of  " + `${keys}`);
+    if (!keys?.includes(lngName)) {
+      console.warn(`language Name should be one of ${keys}`);
       return {
         lang,
         activeLang

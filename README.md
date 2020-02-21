@@ -72,3 +72,12 @@ export default MyTextComponent;
 | :---------- | :----------------------------------------------------------------------------: | :------: |
 | langs       | object of { langName:{ lang: jsonLang (Required), isRtl: boolean undefined } } |   true   |
 | defaultLang |                 `string | undefined` (one of your langs keys)                  |  false   |
+
+## useLocalize
+
+| Name               |                       Type                        |
+| :----------------- | :-----------------------------------------------: |
+| currentTranslation |             active translation object             |
+| activeLang         |                      string                       |
+| isRtl              | if provides in initialization will retrun boolean |
+| setLang            |               (newLangName) => void               |
