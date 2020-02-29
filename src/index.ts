@@ -1,12 +1,13 @@
-import { useContext, useCallback } from "react";
-import { LocalProps, UseLocalProps } from "./index.interface";
+import { useContext, useCallback, useMemo } from "react";
+import { LocalProps, UseLocalProps, dir } from "./index.interface";
+import Localization from "./localization";
 import langContext from "./Provider/context";
 import Provider from "./Provider";
-import Localization from "./localization";
+import styles from "./styles";
 
 const localize = new Localization();
 
-const useLocalize = (): UseLocalProps => {
+export const useLocalize = (): UseLocalProps => {
   const {
     state: { langName },
     setActiveLang
@@ -31,6 +32,40 @@ const useLocalize = (): UseLocalProps => {
   };
 };
 
-const initTranslations = localize.initTranslations.bind(localize);
+/*
+  for react-native components to reverse directions
+ */
 
-export { Provider, initTranslations, useLocalize };
+export const useTransformDirection = (initialDir?: dir) => {
+  const { isRtl } = useLocalize();
+
+  return useMemo(() => {
+    let style = null;
+
+    if (initialDir) {
+      style = styles[initialDir];
+    }
+
+    if (isRtl) {
+      style = styles.right;
+    }
+
+    return style;
+  }, [initialDir, isRtl]);
+};
+
+/*
+  for react-native input + text components
+ */
+
+export const useTextDirection = () => {
+  const { isRtl } = useLocalize();
+
+  return useMemo(() => {
+    return isRtl ? styles.rtlStyle : styles.ltrStyle;
+  }, [isRtl]);
+};
+
+export const initTranslations = localize.initTranslations.bind(localize);
+
+export { Provider, styles };

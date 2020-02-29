@@ -1,54 +1,56 @@
-import initLangs from "./init";
-import { LangType, LangData, LocalProps } from "./index.interface";
+import { LangData, LangType, LocalProps } from "./index.interface";
 
-class Localization {
-  constructor() {
-    this.activeLang = "";
-    this.isRtl = false;
-    this.langData = {};
-    this.translations = "";
+class Localize {
+  private translations: string = "";
+  public activeLang: string = "";
+  public isRtl?: boolean = false;
+  public langData: LangData = {};
+
+  private initLang(trans: Record<string, LangType>, lngname?: string): void {
+    if (!lngname || !Object.keys(trans).includes(lngname)) {
+      lngname = Object.keys(trans)[0];
+    }
+
+    this.activeLang = lngname;
+
+    const langData: LangType = trans[lngname];
+
+    this.isRtl = langData.isRtl;
+    this.langData = langData.lang;
   }
 
-  private translations: any;
-
-  public activeLang: string;
-  public isRtl?: boolean;
-  public langData: LangData;
-
-  updater = (langs: any, lName?: any) => {
-    const requestUpdateLang = initLangs(langs, lName);
-    const {
-      activeLang,
-      lang: { lang, isRtl }
-    } = requestUpdateLang(lName);
-
-    this.activeLang = activeLang;
-    this.isRtl = isRtl;
-    this.langData = lang;
-  };
-
-  initTranslations<
-    T extends Record<string, LangType>,
-    P extends keyof T | string
-  >(translations: T, defaultLang: P): void {
+  initTranslations<T extends Record<string, LangType>, L extends keyof T>(
+    translations: T,
+    defaultLang?: L
+  ): void {
     if (
       !translations ||
       (!Array.isArray(translations) && !Object.keys(translations).length)
     ) {
-      throw "Translations Required for initialization";
+      console.error("Translations Not Found");
+    } else {
+      this.translations = JSON.stringify(translations);
+      this.initLang(translations, defaultLang as string);
     }
-    this.translations = JSON.stringify(translations);
-    this.updater(translations, defaultLang);
   }
 
   getLangData(langName: string): LocalProps {
-    this.updater(JSON.parse(this.translations), langName || this.activeLang);
+    if (this.translations) {
+      const langData: LangType = JSON.parse(this.translations)[
+        langName || this.activeLang
+      ];
+
+      this.isRtl = langData.isRtl;
+      this.langData = langData.lang;
+      this.activeLang = langName;
+    }
+
     return {
       currentTranslation: this.langData,
-      activeLang: this.activeLang,
+      activeLang: this.activeLang || langName,
       isRtl: this.isRtl
     };
   }
 }
 
-export default Localization;
+export default Localize;

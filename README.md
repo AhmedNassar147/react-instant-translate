@@ -11,6 +11,8 @@ npm i react-instant-translate
 
 ## in your app root
 
+## first lang object key would be the default langName if you didn't set the initial one
+
 ```jsx
 import { Provider, initTranslations } from "react-instant-translate/dist";
 
@@ -33,7 +35,7 @@ initTranslations(
       isRtl: true
     }
   },
-  "ar"
+  "ar" // default lang name
 );
 
 ReactDOM.render(
@@ -59,6 +61,53 @@ const MyTextComponent = () => {
 export default MyTextComponent;
 ```
 
+## For React-Native
+
+```jsx
+import React from "react";
+import { Text } from "react-native";
+import { useLocalize, useTextDirection } from "react-instant-translate/dist";
+
+const MyNativeTextComponent = () => {
+  const { currentTranslation } = useLocalize();
+  const txtDirStyle = useTextDirection();
+  return <Text style={txtDirStyle}>{currentTranslation.login}</Text>;
+};
+
+export default MyNativeTextComponent;
+```
+
+```jsx
+import React from "react";
+import { TextInput } from "react-native";
+import { useLocalize, useTextDirection } from "react-instant-translate/dist";
+
+const MyNativeTextInput = () => {
+  const { currentTranslation } = useLocalize();
+  const txtDirStyle = useTextDirection();
+  return <TextInput style={txtDirStyle} />;
+};
+
+export default MyNativeTextInput;
+```
+
+```jsx
+import React from "react";
+import { View } from "react-native";
+import {
+  useLocalize,
+  useTransformDirection
+} from "react-instant-translate/dist";
+
+const MyScreenContainer = () => {
+  const { useTransformDirection } = useLocalize();
+  const dirStyle = useTransformDirection();
+  return <View style={dirStyle}>// what ever children</View>;
+};
+
+export default MyScreenContainer;
+```
+
 ## Provider Props
 
 | Name        |         Type         | Required |
@@ -81,3 +130,7 @@ export default MyTextComponent;
 | activeLang         |                      string                       |
 | isRtl              | if provides in initialization will retrun boolean |
 | setLang            |               (newLangName) => void               |
+
+```
+
+```

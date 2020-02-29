@@ -5,11 +5,6 @@ export type LangType = {
   lang: LangData;
 };
 
-export type UpdatedLocalLangType = {
-  activeLang: string;
-  lang: LangData;
-};
-
 export interface LocalProps {
   currentTranslation: LangData;
   activeLang: string;
@@ -19,3 +14,5 @@ export interface LocalProps {
 export interface UseLocalProps extends LocalProps {
   setLang: (lngName: string) => void;
 }
+
+export type dir = "right" | "left";
